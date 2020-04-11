@@ -1,14 +1,18 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class Container {
+public class Container implements Requirements{
     private static volatile Container instance;
     private int maxCapacity;
-    private double airHumidity; //уровень влажности воздуха измеряется в %, это дробное положительное число
-    private int lightLevel; //уровень освещенности измеряется в люксах (лк), это целое положительное число
-    public static List<Plant> plantsIntoContainer = new ArrayList<>(); //список растений, содержащихся в контейнере
+    //уровень влажности воздуха измеряется в %, это дробное положительное число
+    private float currentAirHumidity = AirHumiditySimulation.getCurrentAirHumidity();
+    //уровень освещенности измеряется в люксах (лк), это целое положительное число
+    private int currentLightLevel;
+    //список растений, содержащихся в контейнере
+    public static List<Plant> plantsIntoContainer = new ArrayList<>();
 
-    public static Container getInstance(int capacity) {
+    private static Container getInstance(int capacity) {
         Container localInstance = instance;
         if (localInstance == null) {
             synchronized (Container.class) {
@@ -25,23 +29,28 @@ public class Container {
         this.maxCapacity = capacity;
     }
 
+    public static void createContainer(int capacity) {
+        getInstance(capacity);
+        System.out.println(new Date() + " Вы видите контейнер. Давайте поместим в него растения!");
+    }
+
     public int getMaxCapacity() {
         return maxCapacity;
     }
 
-    public double getAirHumidity() {
-        return airHumidity;
+    public float getAirHumidity() {
+        return currentAirHumidity;
     }
 
-    public void setAirHumidity(double airHumidity) {
-        this.airHumidity = airHumidity;
+    public void setAirHumidity(float airHumidity) {
+        this.currentAirHumidity = airHumidity;
     }
 
     public int getLightLevel() {
-        return lightLevel;
+        return currentLightLevel;
     }
 
     public void setLightLevel(int lightLevel) {
-        this.lightLevel = lightLevel;
+        this.currentLightLevel = lightLevel;
     }
 }

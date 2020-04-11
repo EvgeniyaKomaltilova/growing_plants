@@ -1,4 +1,4 @@
 public interface Requirements {
-    double minAirHumidity = 0;
-    double maxAirHumidity = 0;
+    float minAirHumidity = 70f;
+    float maxAirHumidity = 80f;
 }

@@ -1,50 +1,76 @@
-public abstract class Device implements Runnable {
-    boolean isStarted = false;
+import java.util.Date;
 
-    public abstract void on();
+public class Device implements Runnable {
+    volatile static boolean isStarted = false;
+    volatile static boolean isTimeToSpraying = false;
+    volatile static int currentAirHumidity;
 
-    public abstract void off();
+    @Override
+    public void run() { }
+    public static void on() {
+        System.out.println(new Date() + " Все девайсы запущены");
+        isStarted = true;
+    }
+    public static void off() {
+        System.out.println(new Date() + " Все девайсы отключены");
+        isStarted = false;
+    }
 
-    class AirHumiditySensor extends Device {
-        boolean isTimeToSpraying = false;
-        double currentAirHumidity = AirHumiditySimulation.getCurrentAirHumidity();
+    static class AirHumiditySensor extends Device {
 
+        public AirHumiditySensor() {
+            Thread threadAHS = new Thread(this);
+            threadAHS.start();
+        }
         @Override
         public void run() {
             while (isStarted) {
-                if (currentAirHumidity < Requirements.minAirHumidity) {
+                currentAirHumidity = AirHumiditySimulation.getCurrentAirHumidity();
+                System.out.println(new Date() + " Влажность воздуха в контейнере: " + currentAirHumidity + "%");
+                if (!isTimeToSpraying && currentAirHumidity <= Requirements.minAirHumidity) {
+                    System.out.println(new Date() + " Внимание! Низкий уровень влажности!");
                     isTimeToSpraying = true;
+                    new Humidifier();
+                }
+                if (isTimeToSpraying && currentAirHumidity >= Requirements.maxAirHumidity) {
+                    System.out.println(new Date() + " Уровень влажности нормализован");
+                    isTimeToSpraying = false;
+                    System.out.println(new Date() + " Увлажнитель отключен");
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
 
-        @Override
-        public void on() {
-            Thread threadAHS = new Thread(new AirHumiditySensor());
-            threadAHS.start();
-            isStarted = true;
-        }
-
-        @Override
-        public void off() {
-            isStarted = false;
-        }
     }
 
-    class Himidifier extends Device {
-        @Override
-        public void on() {
+    class Humidifier extends Device {
 
-        }
-
-        @Override
-        public void off() {
-
+        public Humidifier() {
+            Thread threadH = new Thread(this);
+            threadH.start();
+            System.out.println(new Date() + " Увлажнитель запущен!");
         }
 
         @Override
         public void run() {
+            while (isTimeToSpraying) {
+                if (currentAirHumidity < Requirements.maxAirHumidity) {
+                    currentAirHumidity++;
+                    AirHumiditySimulation.setCurrentAirHumidity(currentAirHumidity);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //isTimeToSpraying = false;
+            }
 
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
-public class PlantFaсtory {
+import java.util.Date;
 
-    private static Plant getPlant(PlantSpecies species, int amount) {
+public class PlantFactory {
+
+    private static Plant getPlant(PlantSpecies species) {
         Plant newPlant = null;
             switch (species) {
                 case STRAWBERRY:
@@ -12,17 +14,23 @@ public class PlantFaсtory {
             return newPlant;
     }
 
-    public static Plant 
-
+    public static void putPlantsIntoContainer(PlantSpecies species, int number) {
+        for (int i = 0; i < number; i++) {
+            getPlant(species);
+        }
+    }
 }
 
 class Strawberry implements Plant{
-    double minSoilMoisture = 40;
-    double maxSoilMoisture = 80;
-    double minAirHumidity = 70;
-    double maxAirHumidity = 80;
+    String name;
+    float minSoilMoisture = 40;
+    float maxSoilMoisture = 80;
+    float minAirHumidity = 70;
+    float maxAirHumidity = 80;
 
     public Strawberry() {
         Container.plantsIntoContainer.add(this);
+        this.name = "клубника #" + Container.plantsIntoContainer.indexOf(this);
+        System.out.println(new Date() + " " + name + " помещена в контейнер!");
     }
 }
