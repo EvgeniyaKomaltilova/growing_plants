@@ -1,8 +1,7 @@
 public class PlantFaсtory {
 
-    public Plant getPlant(PlantSpecies species, int amount) {
+    private static Plant getPlant(PlantSpecies species, int amount) {
         Plant newPlant = null;
-        for (int i = 0; i < amount; i++) {
             switch (species) {
                 case STRAWBERRY:
                     newPlant = new Strawberry();
@@ -10,9 +9,10 @@ public class PlantFaсtory {
                 default:
                     throw new IllegalArgumentException("Неизвестный вид");
             }
-        }
             return newPlant;
     }
+
+    public static Plant 
 
 }
 
